@@ -1,14 +1,38 @@
 DROP TABLE IF EXISTS QuestionAnswer;
 DROP TABLE IF EXISTS Answer;
 DROP TABLE IF EXISTS Question;
+DROP TABLE IF EXISTS Category;
+DROP TABLE IF EXISTS Type;
+DROP TABLE IF EXISTS Difficulty;
+
+-- Tabelle für Kategorien
+CREATE TABLE Category (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    name VARCHAR(255) NOT NULL UNIQUE
+);
+
+-- Tabelle für Fragetypen
+CREATE TABLE Type (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    name VARCHAR(50) NOT NULL UNIQUE
+);
+
+-- Tabelle für Schwierigkeitsgrade
+CREATE TABLE Difficulty (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    level VARCHAR(50) NOT NULL UNIQUE
+);
 
 -- Tabelle für Fragen
 CREATE TABLE Question (
     id VARCHAR(36) PRIMARY KEY,
-    type VARCHAR(50) NOT NULL,
-    difficulty VARCHAR(50) NOT NULL,
-    category VARCHAR(255) NOT NULL,
-    question TEXT NOT NULL
+    typeId INTEGER NOT NULL,
+    difficultyId INTEGER NOT NULL,
+    categoryId INTEGER NOT NULL,
+    question TEXT NOT NULL,
+    FOREIGN KEY (typeId) REFERENCES Type(id),
+    FOREIGN KEY (difficultyId) REFERENCES Difficulty(id),
+    FOREIGN KEY (categoryId) REFERENCES Category(id)
 );
 
 -- Tabelle für Antworten (jede Antwort nur 1x gespeichert)
