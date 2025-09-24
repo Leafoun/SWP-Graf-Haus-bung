@@ -1,0 +1,32 @@
+datasource db2 {
+  provider = "mysql" // oder "postgresql" je nach deiner DB
+  url      = env("Datenbank_URL")
+}
+
+generator client2 {
+  provider = "prisma-client"
+  output = "client"
+  runtime = "deno"
+}
+
+model artist {
+  id       String     @id @default(cuid())
+  name     String     @unique
+  style    styles    @relation(fields: [styleId], references: [id])
+  styleId  String
+  instrument instruments @relation(fields: [instrumentId], references: [id])
+  instrumentId String
+}
+
+model instruments {
+  id              String     @id @default(cuid())
+  name            String
+  instrument_type String
+  artists         artist[]
+}
+
+model styles {
+  id       String     @id @default(cuid())
+  name     String     @unique
+  artists  artist[]
+}
