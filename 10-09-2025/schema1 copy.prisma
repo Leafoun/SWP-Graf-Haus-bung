@@ -12,20 +12,18 @@ generator client2 {
 model artist {
   id       String     @id @default(cuid())
   name     String     @unique
-  style    styles    @relation(fields: [styleId], references: [id])
-  styleId  String
-  instrument instruments @relation(fields: [instrumentId], references: [id])
-  instrumentId String
+  styles   style[]   
+  instruments instrument[]
 }
 
-model instruments {
+model instrument {
   id              String     @id @default(cuid())
   name            String
   instrument_type String
   artists         artist[]
 }
 
-model styles {
+model style {
   id       String     @id @default(cuid())
   name     String     @unique
   artists  artist[]
