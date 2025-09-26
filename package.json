@@ -1,0 +1,30 @@
+{
+  "name": "swp-graf-hausarbeit",
+  "version": "1.0.0",
+  "description": "SWP Graf Hausaufgabe mit Deno und Prisma",
+  "type": "module",
+  "scripts": {
+    "db:generate": "prisma generate",
+    "db:push": "prisma db push",
+    "db:migrate": "prisma migrate dev",
+    "db:studio": "prisma studio"
+  },
+  "dependencies": {
+    "@prisma/client": "latest"
+  },
+  "devDependencies": {
+    "prisma": "latest"
+  },
+  "main": "index.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Leafoun/SWP-Graf-Haus-bung.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Leafoun/SWP-Graf-Haus-bung/issues"
+  },
+  "homepage": "https://github.com/Leafoun/SWP-Graf-Haus-bung#readme"
+}

@@ -1,0 +1,35 @@
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../generated/client"
+}
+
+model Artist {
+  id          String       @id @default(cuid())
+  name        String       @unique
+  styles      Style[]      @relation("ArtistStyles")
+  instruments Instrument[] @relation("ArtistInstruments")
+
+  @@map("artists")
+}
+
+model Instrument {
+  id              String   @id @default(cuid())
+  name            String
+  instrument_type String
+  artists         Artist[] @relation("ArtistInstruments")
+
+  @@map("instruments")
+}
+
+model Style {
+  id      String   @id @default(cuid())
+  name    String   @unique
+  artists Artist[] @relation("ArtistStyles")
+
+  @@map("styles")
+}
