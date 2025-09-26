@@ -1,0 +1,6 @@
+{
+  "deno.enable": true,
+  "deno.path": "C:\\Users\\raphi\\.deno\\bin\\deno.exe",
+  "deno.lint": true,
+  "deno.unstable": []
+}
