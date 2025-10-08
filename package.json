@@ -10,10 +10,8 @@
     "db:studio": "prisma studio"
   },
   "dependencies": {
-    "@prisma/client": "latest"
-  },
-  "devDependencies": {
-    "prisma": "latest"
+    "@prisma/client": "latest",
+    "prisma": "^6.17.0"
   },
   "main": "index.js",
   "repository": {

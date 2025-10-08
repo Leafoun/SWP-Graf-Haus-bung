@@ -4,8 +4,9 @@ datasource db {
 }
 
 generator client {
-  provider = "prisma-client-js"
-  output   = "../generated/client"
+  provider = "prisma-client"
+  output   = "client"
+  runtime = "deno"
 }
 
 model Artist {
@@ -19,7 +20,7 @@ model Artist {
 
 model Instrument {
   id              String   @id @default(cuid())
-  name            String
+  name            String //wenn String? stehen würde, könnte der Wert null sein
   instrument_type String
   artists         Artist[] @relation("ArtistInstruments")
 
