@@ -9,25 +9,33 @@ generator client {
   runtime = "deno"
 }
 
-model User {
-  id    Int    @id @default(autoincrement())
-  email String @unique
-  name  String
-  posts Post[]
-  blogs Blog[]
+model player {
+  id     Int     @id @default(autoincrement())
+  name   String
+  age    Int
+  teamId Int
+  mannschaft Mannschaft @relation(fields: [teamId], references: [id])
 }
 
-model Post {
+model Mannschaft {
+  id      Int      @id @default(autoincrement())
+  name    String
+  country String
+  players player[]
+}
+
+model Stadion {
   id      Int    @id @default(autoincrement())
   name    String
-  content String
-  userId  Int
-  user    User   @relation(fields: [userId], references: [id])
+  city    String
 }
 
-model Blog {
-  id        Int      @id @default(autoincrement())
-  title     String
-  createdAt DateTime @default(now())
-  users     User[]
+model Match {
+  id         Int     @id @default(autoincrement())
+  date       String
+  location   String
+  homeTeamId Int
+  awayTeamId Int
+  homeTeam   Mannschaft @relation("HomeTeam", fields: [homeTeamId], references: [id])
+  awayTeam   Mannschaft @relation("AwayTeam", fields: [awayTeamId], references: [id])
 }
