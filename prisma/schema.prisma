@@ -9,28 +9,25 @@ generator client {
   runtime = "deno"
 }
 
-model Artist {
-  id          String       @id @default(cuid())
-  name        String       @unique
-  styles      Style[]      @relation("ArtistStyles")
-  instruments Instrument[] @relation("ArtistInstruments")
-
-  @@map("artists")
+model User {
+  id    Int    @id @default(autoincrement())
+  email String @unique
+  name  String
+  posts Post[]
+  blogs Blog[]
 }
 
-model Instrument {
-  id              String   @id @default(cuid())
-  name            String //wenn String? stehen würde, könnte der Wert null sein
-  instrument_type String
-  artists         Artist[] @relation("ArtistInstruments")
-
-  @@map("instruments")
+model Post {
+  id      Int    @id @default(autoincrement())
+  name    String
+  content String
+  userId  Int
+  user    User   @relation(fields: [userId], references: [id])
 }
 
-model Style {
-  id      String   @id @default(cuid())
-  name    String   @unique
-  artists Artist[] @relation("ArtistStyles")
-
-  @@map("styles")
+model Blog {
+  id        Int      @id @default(autoincrement())
+  title     String
+  createdAt DateTime @default(now())
+  users     User[]
 }
