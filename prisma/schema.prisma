@@ -22,20 +22,25 @@ model Mannschaft {
   name    String
   country String
   players player[]
+  homeMatches Match[] @relation("HomeTeam")
+  awayMatches Match[] @relation("AwayTeam")
 }
 
 model Stadion {
   id      Int    @id @default(autoincrement())
   name    String
   city    String
+  matches Match[]
 }
 
 model Match {
   id         Int     @id @default(autoincrement())
-  date       String
-  location   String
+  date       DateTime
+  stadionId  Int
+  stadion    Stadion   @relation(fields: [stadionId], references: [id])
   homeTeamId Int
   awayTeamId Int
+  ergebnis   String?
   homeTeam   Mannschaft @relation("HomeTeam", fields: [homeTeamId], references: [id])
   awayTeam   Mannschaft @relation("AwayTeam", fields: [awayTeamId], references: [id])
 }
