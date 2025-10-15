@@ -1,46 +1,41 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
 datasource db {
   provider = "sqlite"
   url      = env("DATABASE_URL")
 }
 
-generator client {
-  provider = "prisma-client"
-  output   = "client"
-  runtime = "deno"
+enum Direction {
+  up
+  down
 }
 
-model player {
-  id     Int     @id @default(autoincrement())
-  name   String
-  age    Int
-  teamId Int
-  mannschaft Mannschaft @relation(fields: [teamId], references: [id])
+model Lift {
+  id           String   @id @default(cuid())
+  name         String
+  currentFloor Int
+  doorsOpen    Boolean  @default(false)
+  createdAt    DateTime @default(now())
+  // relations
+  internalRequests InternalRequest[]
+  externalCalls    ExternalCall[]
 }
 
-model Mannschaft {
-  id      Int      @id @default(autoincrement())
-  name    String
-  country String
-  players player[]
-  homeMatches Match[] @relation("HomeTeam")
-  awayMatches Match[] @relation("AwayTeam")
+model ExternalCall {
+  id        String   @id @default(cuid())
+  floor     Int
+  direction Direction
+  createdAt DateTime @default(now())
+  lift      Lift?    @relation(fields: [liftId], references: [id])
+  liftId    String?
 }
 
-model Stadion {
-  id      Int    @id @default(autoincrement())
-  name    String
-  city    String
-  matches Match[]
-}
-
-model Match {
-  id         Int     @id @default(autoincrement())
-  date       DateTime
-  stadionId  Int
-  stadion    Stadion   @relation(fields: [stadionId], references: [id])
-  homeTeamId Int
-  awayTeamId Int
-  ergebnis   String?
-  homeTeam   Mannschaft @relation("HomeTeam", fields: [homeTeamId], references: [id])
-  awayTeam   Mannschaft @relation("AwayTeam", fields: [awayTeamId], references: [id])
+model InternalRequest {
+  id        String   @id @default(cuid())
+  floor     Int
+  createdAt DateTime @default(now())
+  lift      Lift     @relation(fields: [liftId], references: [id])
+  liftId    String
 }

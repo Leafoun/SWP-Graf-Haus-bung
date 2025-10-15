@@ -1,0 +1,46 @@
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client"
+  output   = "client"
+  runtime = "deno"
+}
+
+model player {
+  id     Int     @id @default(autoincrement())
+  name   String
+  age    Int
+  teamId Int
+  mannschaft Mannschaft @relation(fields: [teamId], references: [id])
+}
+
+model Mannschaft {
+  id      Int      @id @default(autoincrement())
+  name    String
+  country String
+  players player[]
+  homeMatches Match[] @relation("HomeTeam")
+  awayMatches Match[] @relation("AwayTeam")
+}
+
+model Stadion {
+  id      Int    @id @default(autoincrement())
+  name    String
+  city    String
+  matches Match[]
+}
+
+model Match {
+  id         Int     @id @default(autoincrement())
+  date       DateTime
+  stadionId  Int
+  stadion    Stadion   @relation(fields: [stadionId], references: [id])
+  homeTeamId Int
+  awayTeamId Int
+  ergebnis   String?
+  homeTeam   Mannschaft @relation("HomeTeam", fields: [homeTeamId], references: [id])
+  awayTeam   Mannschaft @relation("AwayTeam", fields: [awayTeamId], references: [id])
+}
