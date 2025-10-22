@@ -34,7 +34,7 @@ interface Request {
 // ---------------------- Einfacher JSON-Speicher (Deno) ----------------------
 // Speichert und lädt die ausstehenden Calls/Targets in `lift-ts/lift-data.json`.
 // Import der Delay-Hilfe aus der Deno Standardbibliothek
-import { delay } from "https://deno.land/std@0.201.0/async/delay.ts";
+import { delay } from "@std/async/delay";
 // Pfad zur JSON-Datei für persistente Daten
 const DATA_FILE = `${Deno.cwd()}/lift-ts/lift-data.json`;
 
@@ -56,7 +56,9 @@ async function saveData(data: { calls?: Call[]; targets?: number[] }) {
   try {
     // Versuche, das Verzeichnis zu erstellen (falls noch nicht vorhanden)
     await Deno.mkdir(`${Deno.cwd()}/lift-ts`, { recursive: true });
-  } catch {}
+  } catch {
+    // Verzeichnis existiert bereits oder Fehler beim Erstellen – ignorieren
+  }
   // Schreibe die JSON-Datei (2 Leerzeichen Einrückung für Lesbarkeit)
   await Deno.writeTextFile(DATA_FILE, JSON.stringify(data, null, 2));
 }
