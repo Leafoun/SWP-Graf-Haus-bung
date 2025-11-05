@@ -24,10 +24,6 @@ model Flight {
     arrivalTime    DateTime
     originId       String
     destinationId  String
-    passengers     Passenger[]
-    origin         Airport  @relation("OriginAirport", fields: [originId], references: [id])
-    destination    Airport  @relation("DestinationAirport", fields: [destinationId], references: [id])
-    planeId        String
     plane          Plane    @relation(fields: [planeId], references: [id])
 }
 model Passenger {
