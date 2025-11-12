@@ -20,7 +20,6 @@ while (passengers_created < passengers_to_create) {
                 firstName: faker.person.firstName(),
                 lastName: faker.person.lastName(),
                 email: faker.internet.email(),
-            },
         });
         passengers_created++;
     } catch (e) {
