@@ -1,6 +1,10 @@
-import { PrismaClient } from "./prisma/client/client.ts";
+import * as passenger from "./Repository/passenger.ts";
+import * as plane from "./Repository/plane.ts";
+import * as airport from "./Repository/airport.ts";
+import * as flight from "./Repository/flight.ts";
 import { faker } from "@faker-js/faker";
-const prisma = new PrismaClient();
+import { disconnect } from "./Repository/db.ts";
+
 
 const ensurePassengers = 20000;
 const ensureAirports = 100;
@@ -11,12 +15,12 @@ console.log("🌱 Starting seed...");
 
 // ensure passengers (no deps)
 console.log(`Ensuring ${ensurePassengers} passengers...`);
-const passengers_to_create = ensurePassengers - await prisma.passenger.count();
+const passengers_to_create = ensurePassengers - await passenger.count();
 let passengers_created = 0;
 while (passengers_created < passengers_to_create) {
     try {
-        await prisma.passenger.create({
-            data: {
+        await passenger.create({
+            
                 firstName: faker.person.firstName(),
                 lastName: faker.person.lastName(),
                 email: faker.internet.email(),
@@ -29,15 +33,13 @@ while (passengers_created < passengers_to_create) {
 
 // ensure planes (no deps)
 console.log(`Ensuring ${ensurePlanes} planes...`);
-const planes_to_create = ensurePlanes - await prisma.plane.count();
+const planes_to_create = ensurePlanes - await plane.count();
 let planes_created = 0;
 while (planes_created < planes_to_create) {
     try {
-        await prisma.plane.create({
-            data: {
-                model: faker.airline.airplane().name,
-                capacity: faker.number.int({ min: 10, max: 850 }),
-            },
+        await plane.create({
+            model: faker.airline.airplane().name,
+            capacity: faker.number.int({ min: 10, max: 850 }),
         });
         planes_created++;
     } catch (e) {
@@ -47,17 +49,15 @@ while (planes_created < planes_to_create) {
 
 // ensure airports (no deps)
 console.log(`Ensuring ${ensureAirports} airports...`);
-const airports_to_create = ensureAirports - await prisma.airport.count();
+const airports_to_create = ensureAirports - await airport.count();
 let airports_created = 0;
 while (airports_created < airports_to_create) {
     const fake_airport = faker.airline.airport();
     try {
-        await prisma.airport.create({
-            data: {
-                name: fake_airport.name,
-                iataCode: fake_airport.iataCode,
-                city: faker.location.city(),
-            },
+        await airport.create({
+            name: fake_airport.name,
+            iataCode: fake_airport.iataCode,
+            city: faker.location.city(),
         });
         airports_created++;
     } catch (e) {
@@ -67,11 +67,11 @@ while (airports_created < airports_to_create) {
 
 // ensure flights (depends on airport, plane)
 console.log(`Ensuring ${ensureFlights} flights...`);
-const flights_to_create = ensureFlights - await prisma.flight.count();
+const flights_to_create = ensureFlights - await flight.count();
 
 // Fetch available airports and planes (once!)
-const airports = await prisma.airport.findMany();
-const planes = await prisma.plane.findMany();
+const airports = await airport.getAll();
+const planes = await plane.getAll();
 
 if (airports.length < 2) {
     console.error("❌ Need at least 2 airports to create flights!");
@@ -95,15 +95,13 @@ while (flights_created < flights_to_create) {
     const plane = planes[faker.number.int({ min: 0, max: planes.length - 1 })];
     
     try {
-        await prisma.flight.create({
-            data: {
-                flightNumber: faker.airline.flightNumber(),
-                departureTime: departure,
-                arrivalTime: arrival,
-                originId: origin.id,
-                destinationId: destination.id,
-                planeId: plane.id,
-            },
+        await flight.create({
+            flightNumber: faker.airline.flightNumber(),
+            departureTime: departure,
+            arrivalTime: arrival,
+            originId: origin.id,
+            destinationId: destination.id,
+            planeId: plane.id,
         });
         flights_created++;
     } catch (e) {
@@ -112,4 +110,4 @@ while (flights_created < flights_to_create) {
 }
 
 console.log("✅ Seed complete!");
-await prisma.$disconnect();
+await disconnect();
