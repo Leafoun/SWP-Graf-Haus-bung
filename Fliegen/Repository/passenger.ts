@@ -8,3 +8,6 @@ export async function count() {
 export async function create(data:Prisma.PassengerCreateArgs["data"]) {
     return await prisma.passenger.create({data});
 }
+export async function findMany() {
+    return await prisma.passenger.findMany();
+}

@@ -7,3 +7,9 @@ export async function count() {
 export async function create(data:Prisma.FlightCreateArgs["data"]) {
     return await prisma.flight.create({data});
 }
+export async function findMany() {
+    return await prisma.flight.findMany();
+}
+export async function assignPassenger(id: string, data: Prisma.FlightUpdateInput) {
+    return await prisma.flight.update({ where: { id }, data });
+}
