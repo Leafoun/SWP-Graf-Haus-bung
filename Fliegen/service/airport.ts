@@ -18,4 +18,22 @@ export async function createAirport(data: {
     return await airportRepo.create(data);
 }
 
+export async function createManyAirports(data: Array<{
+    name: string;
+    iataCode: string;
+    city: string;
+}>) {
+    // Validiere alle IATA Codes
+    for (const airport of data) {
+        if (airport.iataCode.length !== 3 || !/^[A-Z]{3}$/.test(airport.iataCode)) {
+            throw new Error(`Invalid IATA code: ${airport.iataCode}`);
+        }
+    }
+
+    // Delegiere an Prisma (SQLite unterstützt kein skipDuplicates)
+    // Bei Duplikaten wird der gesamte Batch fehlschlagen
+    const { prisma } = await import("../Repository/db.ts");
+    return await prisma.airport.createMany({ data });
+}
+
 export { count, getAll } from "../Repository/airport.ts";

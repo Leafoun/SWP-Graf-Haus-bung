@@ -21,6 +21,29 @@ export async function createFlight(data: {
     return await flightRepo.create(data);
 }
 
+export async function createManyFlights(data: Array<{
+    flightNumber: string;
+    departureTime: Date;
+    arrivalTime: Date;
+    originId: string;
+    destinationId: string;
+    planeId: string;
+}>) {
+    // Validiere alle Flights
+    for (const flight of data) {
+        if (flight.departureTime >= flight.arrivalTime) {
+            throw new Error(`Invalid times for flight ${flight.flightNumber}`);
+        }
+        if (flight.originId === flight.destinationId) {
+            throw new Error(`Same origin and destination for flight ${flight.flightNumber}`);
+        }
+    }
+
+    // Delegiere an Prisma
+    const { prisma } = await import("../Repository/db.ts");
+    return await prisma.flight.createMany({ data });
+}
+
 export async function bookPassengersToFlight(flightId: string, passengerIds: string[]) {
     // Business-Logik: Prüfe ob Flight existiert und hole Plane-Kapazität
     const flights = await flightRepo.findMany();
@@ -48,4 +71,4 @@ export async function bookPassengersToFlight(flightId: string, passengerIds: str
     });
 }
 
-export { count, findMany } from "../Repository/flight.ts";
+export { count, findMany, findManyWithRelations, findById } from "../Repository/flight.ts";

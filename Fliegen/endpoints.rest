@@ -1,0 +1,85 @@
+### Health Check
+GET http://localhost:3000
+
+### ============ FLIGHTS ============
+
+### Get all flights (basic - ohne Relations)
+GET http://localhost:3000/flights
+
+### Get all flights WITH FULL RELATIONS (passengers, plane, origin, destination)
+GET http://localhost:3000/flights?include=true
+
+### Get ONE specific flight by ID (mit allen Relations)
+GET http://localhost:3000/flights/REPLACE_WITH_FLIGHT_ID
+
+### ============ PASSENGERS ============
+
+### Get all passengers
+GET http://localhost:3000/passengers
+
+### Create new passenger
+POST http://localhost:3000/passengers
+Content-Type: application/json
+
+{
+  "firstName": "Max",
+  "lastName": "Mustermann",
+  "email": "max.mustermann@example.com"
+}
+
+### ============ PLANES ============
+
+### Get all planes
+GET http://localhost:3000/planes
+
+### Create new plane
+POST http://localhost:3000/planes
+Content-Type: application/json
+
+{
+  "model": "Airbus A320",
+  "capacity": 180
+}
+
+### ============ AIRPORTS ============
+
+### Get all airports
+GET http://localhost:3000/airports
+
+### Create new airport
+POST http://localhost:3000/airports
+Content-Type: application/json
+
+{
+  "name": "Vienna International Airport",
+  "iataCode": "VIE",
+  "city": "Vienna"
+}
+
+### ============ CREATE FLIGHT ============
+
+### Create new flight
+POST http://localhost:3000/flights
+Content-Type: application/json
+
+{
+  "flightNumber": "OS123",
+  "departureTime": "2025-12-01T10:00:00Z",
+  "arrivalTime": "2025-12-01T12:00:00Z",
+  "originId": "REPLACE_WITH_AIRPORT_ID",
+  "destinationId": "REPLACE_WITH_DIFFERENT_AIRPORT_ID",
+  "planeId": "REPLACE_WITH_PLANE_ID"
+}
+
+### ============ BOOK PASSENGERS ============
+
+### Book passengers to flight
+POST http://localhost:3000/flights/REPLACE_WITH_FLIGHT_ID/passengers
+Content-Type: application/json
+
+{
+  "passengerIds": [
+    "REPLACE_WITH_PASSENGER_ID_1",
+    "REPLACE_WITH_PASSENGER_ID_2"
+  ]
+}

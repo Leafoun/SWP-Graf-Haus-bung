@@ -16,53 +16,42 @@ console.log("🌱 Starting seed...");
 // ensure passengers (no deps)
 console.log(`Ensuring ${ensurePassengers} passengers...`);
 const passengers_to_create = ensurePassengers - await passengerService.count();
-let passengers_created = 0;
-while (passengers_created < passengers_to_create) {
-    try {
-        await passengerService.createPassenger({
-            
-                firstName: faker.person.firstName(),
-                lastName: faker.person.lastName(),
-                email: faker.internet.email(),
-        });
-        passengers_created++;
-    } catch (e) {
-        console.error(`Error creating passenger:`, (e as Error).message);
-    }
+if (passengers_to_create > 0) {
+    const passengerData = Array.from({ length: passengers_to_create }, () => ({
+        firstName: faker.person.firstName(),
+        lastName: faker.person.lastName(),
+        email: faker.internet.email(),
+    }));
+    await passengerService.createManyPassengers(passengerData);
+    console.log(`  Created ${passengers_to_create} passengers (duplicates skipped)`);
 }
 
 // ensure planes (no deps)
 console.log(`Ensuring ${ensurePlanes} planes...`);
 const planes_to_create = ensurePlanes - await planeService.count();
-let planes_created = 0;
-while (planes_created < planes_to_create) {
-    try {
-        await planeService.createPlane({
-            model: faker.airline.airplane().name,
-            capacity: faker.number.int({ min: 10, max: 850 }),
-        });
-        planes_created++;
-    } catch (e) {
-        console.error(`Error creating plane:`, (e as Error).message);
-    }
+if (planes_to_create > 0) {
+    const planeData = Array.from({ length: planes_to_create }, () => ({
+        model: faker.airline.airplane().name,
+        capacity: faker.number.int({ min: 10, max: 850 }),
+    }));
+    await planeService.createManyPlanes(planeData);
+    console.log(`  Created ${planes_to_create} planes`);
 }
 
 // ensure airports (no deps)
 console.log(`Ensuring ${ensureAirports} airports...`);
 const airports_to_create = ensureAirports - await airportService.count();
-let airports_created = 0;
-while (airports_created < airports_to_create) {
-    const fake_airport = faker.airline.airport();
-    try {
-        await airportService.createAirport({
+if (airports_to_create > 0) {
+    const airportData = Array.from({ length: airports_to_create }, () => {
+        const fake_airport = faker.airline.airport();
+        return {
             name: fake_airport.name,
             iataCode: fake_airport.iataCode,
             city: faker.location.city(),
-        });
-        airports_created++;
-    } catch (e) {
-        console.error(`Error creating airport:`, (e as Error).message);
-    }
+        };
+    });
+    await airportService.createManyAirports(airportData);
+    console.log(`  Created airports (duplicates skipped)`);
 }
 
 // ensure flights (depends on airport, plane)
@@ -82,31 +71,29 @@ if (planes.length === 0) {
     Deno.exit(1);
 }
 
-let flights_created = 0;
-while (flights_created < flights_to_create) {
-    const departure = faker.date.soon({ days: 30 });
-    const arrival = new Date(departure.getTime() + faker.number.int({ min: 1, max: 12 }) * 3600000);
-    
-    const origin = airports[faker.number.int({ min: 0, max: airports.length - 1 })];
-    let destination = airports[faker.number.int({ min: 0, max: airports.length - 1 })];
-    while (destination.id === origin.id && airports.length > 1) {
-        destination = airports[faker.number.int({ min: 0, max: airports.length - 1 })];
-    }
-    const plane = planes[faker.number.int({ min: 0, max: planes.length - 1 })];
-    
-    try {
-        await flightService.createFlight({
+if (flights_to_create > 0) {
+    const flightData = Array.from({ length: flights_to_create }, () => {
+        const departure = faker.date.soon({ days: 30 });
+        const arrival = new Date(departure.getTime() + faker.number.int({ min: 1, max: 12 }) * 3600000);
+        
+        const origin = airports[faker.number.int({ min: 0, max: airports.length - 1 })];
+        let destination = airports[faker.number.int({ min: 0, max: airports.length - 1 })];
+        while (destination.id === origin.id && airports.length > 1) {
+            destination = airports[faker.number.int({ min: 0, max: airports.length - 1 })];
+        }
+        const plane = planes[faker.number.int({ min: 0, max: planes.length - 1 })];
+        
+        return {
             flightNumber: faker.airline.flightNumber(),
             departureTime: departure,
             arrivalTime: arrival,
             originId: origin.id,
             destinationId: destination.id,
             planeId: plane.id,
-        });
-        flights_created++;
-    } catch (e) {
-        console.error(`Error creating flight:`, (e as Error).message);
-    }
+        };
+    });
+    await flightService.createManyFlights(flightData);
+    console.log(`  Created ${flights_to_create} flights`);
 }
 
 // assign passengers to flights

@@ -17,4 +17,20 @@ export async function createPlane(data: {
     return await planeRepo.create(data);
 }
 
+export async function createManyPlanes(data: Array<{
+    model: string;
+    capacity: number;
+}>) {
+    // Validiere alle Kapazitäten
+    for (const plane of data) {
+        if (plane.capacity <= 0 || plane.capacity > 1000) {
+            throw new Error(`Invalid capacity: ${plane.capacity}`);
+        }
+    }
+
+    // Delegiere an Prisma
+    const { prisma } = await import("../Repository/db.ts");
+    return await prisma.plane.createMany({ data });
+}
+
 export { count, getAll } from "../Repository/plane.ts";
