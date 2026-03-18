@@ -1,0 +1,69 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../lib/prismaclient"
+  runtime  = "deno"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+
+model Filiale {
+  filiale_id Int @id @default(autoincrement())
+  name       String
+  abteilungen Abteilung[]
+  mitarbeiter Mitarbeiter[]
+
+}
+
+model Abteilung {
+  abteilung_id Int @id @default(autoincrement())
+  name        String
+  filiale_id  Int
+  filiale     Filiale @relation(fields: [filiale_id], references: [filiale_id])
+  bücher      Buch[]
+}
+
+model Mitarbeiter {
+  mitarbeiter_id Int @id @default(autoincrement())
+  name           String
+  filiale_id     Int
+  filiale        Filiale @relation(fields: [filiale_id], references: [filiale_id])
+}
+
+model Buch {
+  buch_id    Int @id @default(autoincrement())
+  titel      String
+  autor      String
+  genre     String
+  abteilung_id Int
+  abteilung Abteilung @relation(fields: [abteilung_id], references: [abteilung_id])
+  exemplare Exemplar[]
+}
+
+model Exemplar {
+  exemplar_id Int @id @default(autoincrement())
+  buch_id     Int
+  buch        Buch @relation(fields: [buch_id], references: [buch_id])
+  ausleihen    Ausleihen[]
+}
+
+model Kunde {
+  kunde_id Int @id @default(autoincrement())
+  name     String
+  ausleihen Ausleihen[]
+}
+
+model Ausleihen {
+  kunde_id       Int
+  exemplar_id    Int
+  ausleihdatum   DateTime @default(now())
+  rueckgabedatum DateTime? // Optional, falls noch nicht zurückgegeben
+
+  kunde    Kunde    @relation(fields: [kunde_id], references: [kunde_id])
+  exemplar Exemplar @relation(fields: [exemplar_id], references: [exemplar_id])
+
+  @@id([kunde_id, exemplar_id]) // Der zusammengesetzte Primary Key
+}
